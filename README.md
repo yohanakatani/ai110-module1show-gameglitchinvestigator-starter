@@ -25,28 +25,39 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Purpose:** A number guessing game where the player tries to guess a randomly generated secret number within a limited number of attempts. The game provides directional hints after each wrong guess and awards points based on how quickly the player wins.
+
+**Bugs found:**
+- Hint messages were reversed: "Go HIGHER" appeared when the guess was above the secret and "Go LOWER" when it was below.
+- The "New Game" button reset attempts to 0, but the game initialized attempts at 1, causing an off-by-one inconsistency in the attempt counter display.
+- The "Hard" difficulty returned range 1–50 while "Normal" returned 1–100, making Hard easier than Normal.
+
+**Fixes applied:**
+- Moved `check_guess` from `app.py` into `logic_utils.py` and corrected the swapped hint messages.
+- Fixed the existing starter tests (they compared a tuple to a string) and added two new tests targeting the hint messages directly.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
-
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+1. Player opens the app and selects Normal difficulty (range 1–100, 8 attempts).
+2. Player enters a guess of 30. The secret is 50. Game shows "Too Low — Go HIGHER" and deducts 5 points from score.
+3. Player enters a guess of 70. Game shows "Too High — Go LOWER" and deducts 5 points from score.
+4. Player enters a guess of 50. Game shows "🎉 Correct!" — balloons appear and the final score is displayed.
+5. Player clicks "New Game" to reset and play again with a fresh secret number.
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.0.3, pluggy-1.6.0
+collected 5 items
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [ 20%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 40%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 60%]
+tests/test_game_logic.py::test_hint_too_high_says_go_lower PASSED        [ 80%]
+tests/test_game_logic.py::test_hint_too_low_says_go_higher PASSED        [100%]
+
+============================== 5 passed in 0.13s ==============================
 ```
 
 ## 🚀 Stretch Features
