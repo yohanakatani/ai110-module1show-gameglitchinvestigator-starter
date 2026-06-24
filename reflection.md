@@ -29,10 +29,10 @@ Document at least 3 bugs you found. Add rows as needed.
 I used Claude Code to investigate the bugs in the game before applying any fixes. I described the symptoms I observed and shared the code files, then asked Claude to explain the logic step-by-step and pinpoint the flaws.
 
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-Claude correctly identified that the hint messages in `check_guess` were swapped — it pointed out that when `guess > secret` the code returns "Go HIGHER" instead of "Go LOWER." I verified this by manually testing the game: guessing 60 when the secret was 50 produced the wrong hint exactly as Claude described.
+Claude correctly identified the root cause of the "New Game" bug: the handler only reset `attempts` and `secret`, leaving `status` as `"won"` or `"lost"`. On the next Streamlit rerun, the status gate at `if st.session_state.status != "playing"` immediately fired `st.stop()`, blocking the new game from rendering at all. Claude traced the full rerun execution path to pinpoint this — I verified it by winning a game, clicking "New Game," and confirming the "You already won" message still appeared. After adding `st.session_state.status = "playing"` and `st.session_state.history = []` to the handler, the game reset cleanly.
 
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
-Claude initially surfaced five bugs, but I only needed three for this reflection. One of the extra bugs (the score formula off-by-one) was valid but not something I could reproduce by simply playing the game — it required reading the code closely, which made it harder to verify manually without running targeted tests.
+When I asked Claude to analyze the New Game bug, it initially listed `score` as a variable that "should" be reset, framing it as part of the fix. That was misleading — resetting score on every new game is a design choice, not a bug. The game was broken because of `status` and `history`, not `score`. I verified this by applying only the `status` and `history` resets and confirming the game worked correctly without touching `score`, which showed that Claude had over-scoped the required fix.
 
 ---
 

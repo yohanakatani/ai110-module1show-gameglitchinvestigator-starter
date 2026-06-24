@@ -71,6 +71,11 @@ with col2:
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
+# FIXME: Logic breaks here — original handler only reset attempts and secret.
+# status, history, and score were never cleared, so on rerun st.session_state.status
+# was still "won"/"lost", triggering st.stop() at the gate below and blocking the new game.
+# FIX: Added status = "playing" and history = [] resets; AI identified st.stop() as the blocker
+# by tracing the rerun execution path through the status gate.
 if new_game:
     st.session_state.attempts = 1
     st.session_state.secret = random.randint(low, high)
